@@ -58,7 +58,10 @@
 		  thisProduct.id = id;
 		  thisProduct.data = data;
 		  thisProduct.renderInMenu();
+		  thisProduct.getElements();
 		  thisProduct.initAccordion();
+		  thisProduct.initOrderForm();
+		  thisProduct.processOrder();
 		  console.log('new Product:', thisProduct);
 	  }
 	  
@@ -72,6 +75,17 @@
 		  const menuContainer = document.querySelector(select.containerOf.menu);
 		  /* add element to menu */
 		  menuContainer.appendChild(thisProduct.element);
+	  }
+	  
+	  getElements(){
+	  const thisProduct = this;
+
+	  thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+	  thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
+	  thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
+	  thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
+	  thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+	  thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
 	  }
 	  
 	  initAccordion(){
@@ -94,6 +108,58 @@
 			  });
 		  }
 		  
+	  }
+	  
+	  initOrderForm(){
+		  const thisProduct = this;
+		  thisProduct.form.addEventListener('submit', function(event){
+		    event.preventDefault();
+		    thisProduct.processOrder();
+		  });
+
+		  for(let input of thisProduct.formInputs){
+		    input.addEventListener('change', function(){
+			thisProduct.processOrder();
+		    });
+		  }
+
+		  thisProduct.cartButton.addEventListener('click', function(event){
+		    event.preventDefault();
+		    thisProduct.processOrder();
+		  });
+	  }
+	  
+	  processOrder(){
+		  const thisProduct = this;
+		  const formData = utils.serializeFormToObject(thisProduct.form);
+		  console.log('formData', formData);
+		  let price = thisProduct.data.price;
+		  if(formData.sauce == 'cream') price += 2;
+		  /*const map = new Map(Object.entries(formData));
+		  console.log(map);*/ 
+		  //alert(formData.toppings);
+		  const toppingsArray = formData.toppings;
+		  if(toppingsArray){
+			  price -= 10;
+			  for(let i = 0; i<toppingsArray.length; i++){
+				if(toppingsArray[i] == 'olives') price += 2;
+			    if(toppingsArray[i] == 'redPeppers') price +=2;
+			    if(toppingsArray[i] == 'greenPeppers') price +=2;
+			    if(toppingsArray[i] == 'mushrooms') price +=2;
+			    if(toppingsArray[i] == 'basil') price +=2;
+			    if(toppingsArray[i] == 'salami') price += 3;
+			  }
+		  }
+		  else if(formData.sauce == 'cream' || formData.sauce == 'tomato'){
+			  price -= 10;
+		  }
+		  /*for(let topping of formData.toppings){
+			  alert(topping);
+		  }*/
+		  /*for(let i = 0; i<formData.toppings.length; i++){
+			  alert(formData.toppings[i]);
+		  }*/
+		  thisProduct.priceElem.innerHTML = price;
 	  }
   }
   
