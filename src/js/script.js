@@ -134,31 +134,24 @@
 		  const formData = utils.serializeFormToObject(thisProduct.form);
 		  console.log('formData', formData);
 		  let price = thisProduct.data.price;
-		  if(formData.sauce == 'cream') price += 2;
-		  /*const map = new Map(Object.entries(formData));
-		  console.log(map);*/ 
-		  //alert(formData.toppings);
-		  const toppingsArray = formData.toppings;
-		  if(toppingsArray){
-			  price -= 10;
-			  for(let i = 0; i<toppingsArray.length; i++){
-				if(toppingsArray[i] == 'olives') price += 2;
-			    if(toppingsArray[i] == 'redPeppers') price +=2;
-			    if(toppingsArray[i] == 'greenPeppers') price +=2;
-			    if(toppingsArray[i] == 'mushrooms') price +=2;
-			    if(toppingsArray[i] == 'basil') price +=2;
-			    if(toppingsArray[i] == 'salami') price += 3;
+		  console.log('thisProduct', thisProduct);
+		  
+		  console.log(formData);
+		  for(let paramId in thisProduct.data.params){
+			  const param = thisProduct.data.params[paramId];
+			  for(let optionId in param.options){
+				  const option = param.options[optionId];
+				  let notSelected = true;
+				  for(let paramSelected in formData){
+					const selected = formData[paramSelected];
+					for(let optionSelectedId of selected){
+						if(optionId == optionSelectedId) notSelected = false;
+						if(optionId == optionSelectedId && !option.default) price += option.price;
+					}
+				  } 
+				  if(notSelected == true && option.default) price -= option.price;
 			  }
 		  }
-		  else if(formData.sauce == 'cream' || formData.sauce == 'tomato'){
-			  price -= 10;
-		  }
-		  /*for(let topping of formData.toppings){
-			  alert(topping);
-		  }*/
-		  /*for(let i = 0; i<formData.toppings.length; i++){
-			  alert(formData.toppings[i]);
-		  }*/
 		  thisProduct.priceElem.innerHTML = price;
 	  }
   }
