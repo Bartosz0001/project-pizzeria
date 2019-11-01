@@ -29,14 +29,23 @@ class DatePicker extends BaseWidget{
                 return false;
             }
         }];
+        flatpickrOptions.onChange = function(dateObj, dateStr, instance){
+            thisWidget.value = dateStr;
+        }
         flatpickr(thisWidget.dom.input, flatpickrOptions);
     }
 
     parseValue(value){
-        return thisWidget.value;
+        const thisWidget = this;
+
+        return value;
     }
 
     isValid(value){
+        return true;
+    }
+
+    renderValue(){
         return true;
     }
 }
